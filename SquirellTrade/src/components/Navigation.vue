@@ -7,7 +7,7 @@
     <v-row align="center">
       <v-col cols="auto align-center ml-2">
         <router-link :to="{name: 'home'}">
-        <v-avatar size="50">
+        <v-avatar size="40">
           <v-img src="https://static.vecteezy.com/system/resources/previews/024/044/200/original/squirrel-icon-clipart-transparent-background-free-png.png" />
         </v-avatar>
         </router-link>
