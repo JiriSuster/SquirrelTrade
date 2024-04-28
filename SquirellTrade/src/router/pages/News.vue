@@ -1,4 +1,7 @@
-<script setup lang="ts">;
+<script setup lang="ts">
+import NewsCard from "@/components/NewsCard.vue";
+
+
 import {reactive} from "vue";
 
 import {getNews, SortOrderEnum} from "@/Services/CryptoCompareApi"
@@ -6,26 +9,28 @@ var news = reactive({
   newsList: []
 })
 
-getNews(SortOrderEnum.Latest,5).then(value => { //tady se vola ziskani news ze service, argumenty jsou optional
-  news.newsList = value; //list of news
+getNews(SortOrderEnum.Latest,18).then(value => { //tady se vola ziskani news ze service, argumenty jsou optional
+  news.newsList = value;
 });
 </script>
 
 <template>
-  <v-container>
-    <h1>News</h1>
-    <div v-if="news.newsList.length === 0">
-      <p>Loading...</p>
-    </div>
-    <div v-else>
-      {{ news.newsList[0]}} <!-- jedno vypsani clanku v plaintextu, abys videl ktere parametry jeste muzes pouzit(body,url...) -->
-      <div v-for="(article, index) in news.newsList" :key="index">
-        <h2>{{ article.title }}</h2>
-        <img :src="article.imageurl" alt="Article Image" /> <!-- to ze to sviti cervene nevadi XD -->
-        <p>{{ article.body }}</p>
+  <v-container class="fill-height">
+    <v-responsive>
+      <h1 class="mb-5">Latest news</h1>
+      <div v-if="news.newsList.length === 0">
+        <p>Loading...</p>
       </div>
-    </div>
+      <div v-else>
+      <v-row>
+        <div v-for="( _ , index) in news.newsList" :key="index">
+          <NewsCard class="mt-5 mb-5 mr-5 ml-5" color="grey-lighten-4" :newsData="news.newsList[index]" ></NewsCard>
+        </div>
+      </v-row>
+      </div>
+    </v-responsive>
   </v-container>
+
 </template>
 
 <style scoped>
