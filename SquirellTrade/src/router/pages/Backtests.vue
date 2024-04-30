@@ -1,9 +1,25 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
+import {Builder} from "xml2js";
 
-const selectedTimeFrame = ref("1D");
+const selectedTimeFrame = ref("1D")
 const selectedFormat = ref("JSON")
+
+function downloadData(){
+
+}
+
+function convertJsonToCsv(){
+
+}
+
+function convertJsonToXml(json: any){
+  const builder = new Builder()
+  const xml = builder.buildObject(json)
+  console.log(xml)
+  return builder.buildObject(json)
+}
 
 </script>
 
@@ -40,7 +56,7 @@ const selectedFormat = ref("JSON")
           <v-btn v-bind:variant="selectedFormat === 'XML' ? 'elevated' : 'outlined'" @click="selectedFormat = 'XML'" color="yellow-darken-2" class="mr-2 pa-1" size="large" density="compact" rounded="xl" >XML</v-btn>
         </v-row>
         <v-row>
-          <v-btn class="ml-2 mb-2 mt-5 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl"  prepend-icon="mdi-download" >Download</v-btn>
+          <v-btn class="ml-2 mb-2 mt-5 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl"  prepend-icon="mdi-download" @click="convertJsonToXml({ 'name': 'david' })">Download</v-btn>
         </v-row>
       </v-col>
 
