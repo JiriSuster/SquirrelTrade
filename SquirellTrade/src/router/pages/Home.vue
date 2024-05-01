@@ -91,10 +91,15 @@ const chartOptions = {
     ]
   }]
 };
-
+/*
 //example of printing data to console
 const store = useYahooFinanceApiStore()
+//METHOD1
 store.getChartData("BTC-USD","1m","1d").then(value => {
   console.log(value)
 })
+//METHOD2
+const data = await store.getChartData("BTC-USD","1m","1d")
+console.log(data)
+*/
 </script>
