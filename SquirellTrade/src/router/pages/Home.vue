@@ -59,13 +59,13 @@
 import Navigation from "@/components/Navigation.vue";
 
 import HighchartsStock from '@/components/StockChart.vue';
-
+import {useYahooFinanceApiStore} from "@/services/YahooFinanceApi";
 const chartOptions = {
   title: {
     text: 'Stock Chart'
   },
   series: [{
-    type: 'candlestick', 
+    type: 'candlestick',
     name: 'BTC-USD',
     data: [
         [1509494400000, 101.00, 101.50, 99.00, 100.50], // [timestamp, open, high, low, close]
@@ -91,4 +91,10 @@ const chartOptions = {
     ]
   }]
 };
+
+//example of printing data to console
+const store = useYahooFinanceApiStore()
+store.getChartData("BTC-USD","1m","1d").then(value => {
+  console.log(value)
+})
 </script>
