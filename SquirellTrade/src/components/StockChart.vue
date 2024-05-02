@@ -1,27 +1,19 @@
+<script setup>
+import { Chart } from "highcharts-vue";
+import Highcharts from 'highcharts';
+import stockInit from 'highcharts/modules/stock';
+
+stockInit(Highcharts);
+</script>
+
 <template>
-  <div ref="chart"></div>
+  <Chart :options="chartOptions" :constructor-type="'stockChart'"></Chart>
 </template>
 
 <script>
-import Highcharts from 'highcharts/highstock'
-import HighchartsVue from 'highcharts-vue'
-
 export default {
-  name: 'HighchartsStock',
   props: {
-    options: {
-      type: Object,
-      required: true
-    }
-  },
-  mixins: [HighchartsVue],
-  mounted() {
-    this.initChart()
-  },
-  methods: {
-    initChart() {
-      this.chart = Highcharts.stockChart(this.$refs.chart, this.options)
-    }
+    chartOptions: Object
   }
 }
 </script>
