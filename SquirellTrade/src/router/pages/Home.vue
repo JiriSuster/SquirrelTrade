@@ -59,9 +59,8 @@
 
 <script setup>
 import {reactive, ref, watch} from "vue";
-import Navigation from "@/components/Navigation.vue";
 import HighchartsStock from '@/components/StockChart.vue';
-import { useYahooFinanceApiStore } from "@/services/YahooFinanceApi";
+import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import SearchResults from "@/components/SearchResults.vue";
 
 const search = ref('');

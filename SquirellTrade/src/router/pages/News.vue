@@ -4,7 +4,7 @@ import NewsCard from "@/components/NewsCard.vue";
 
 import {reactive} from "vue";
 
-import {SortOrderEnum, useCryptoCompareApiStore} from "@/services/CryptoCompareApi"
+import {SortOrderEnum, useCryptoCompareApiStore} from "@/Services/CryptoCompareApi"
 var news = reactive({
   newsList: []
 })

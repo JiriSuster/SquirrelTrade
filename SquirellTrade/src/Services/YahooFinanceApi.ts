@@ -54,5 +54,31 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
 
   }
 
-  return {getChartData, search}
+  async function getRawData(symbol: string, interval: string, range: string): Promise<string> {
+    const url = `https://user.mendelu.cz/xsuster/proxy.php?url=${(`https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${interval}&range=${range}`)}`;
+    try {
+      const response = await axios.get(url);
+      const data = response.data;
+
+      const json_data = [];
+      for (const entry of data) {
+        const [timestamp, open, high, low, close] = entry;
+        const json_entry = {
+          timestamp: timestamp,
+          open: open,
+          high: high,
+          low: low,
+          close: close
+        };
+        json_data.push(json_entry);
+      }
+      return JSON.stringify(json_data);
+
+    } catch (error) {
+      console.error('Error fetching data from Yahoo Finance:', error);
+      throw new Error('Error fetching data from Yahoo Finance.');
+    }
+  }
+
+  return {getChartData, search, getRawData}
 })
