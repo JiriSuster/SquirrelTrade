@@ -4,7 +4,7 @@ import axios from "axios";
 export const useYahooFinanceApiStore = defineStore('yahoo', () => {
 
   async function getChartData(symbol: string, interval: string, range: string): Promise<number[][]> {
-    const url = `https://user.mendelu.cz/xsuster/proxy.php?url=${encodeURIComponent(`https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${interval}&range=${range}`)}`;
+    const url = `https://user.mendelu.cz/xsuster/proxy.php?url=${(`https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${interval}&range=${range}`)}`;
     try {
       const response = await axios.get(url);
       const data = response.data;
@@ -37,5 +37,22 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
       throw new Error('Error fetching data from Yahoo Finance.');
     }
   }
-  return {getChartData}
+
+  async function search(query: string){
+    const proxy: string = "https://user.mendelu.cz/xsuster/proxy.php?url="
+    const endpoint: string = "https://query2.finance.yahoo.com/v1/finance/search?q="
+    const URL = `${proxy}${(endpoint)}${(query)}`
+
+    try {
+      const response = await axios.get(URL);
+      const data = response.data;
+      return data
+
+    } catch (error){
+
+    }
+
+  }
+
+  return {getChartData, search}
 })

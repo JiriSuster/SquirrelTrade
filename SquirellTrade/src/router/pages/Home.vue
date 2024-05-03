@@ -14,6 +14,8 @@
       </v-col>
     </v-row>
 
+    <SearchResults v-if="searchResults" :searchResults="searchResults" />
+
     <h1>World markets</h1>
     <div class="d-flex justify-space-between">
       <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain">Sap500</v-btn>
@@ -56,10 +58,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {reactive, ref, watch} from "vue";
 import Navigation from "@/components/Navigation.vue";
 import HighchartsStock from '@/components/StockChart.vue';
 import { useYahooFinanceApiStore } from "@/services/YahooFinanceApi";
+import SearchResults from "@/components/SearchResults.vue";
+
+const search = ref('');
+const searchResults = ref([]);
 
 //example of filling chart with BTC-USD data
 const store = useYahooFinanceApiStore();
@@ -72,6 +78,18 @@ store.getChartData("BTC-USD", "1m", "1d").then(candlestickData => {
     name: 'BTC-USD',
     data: candlestickData
   }];
+});
+
+
+const searchFunction = (query) => {
+  store.search(query).then(value => {
+    searchResults.value = value.quotes;
+  });
+};
+
+
+watch(search, (newValue) => {
+  searchFunction(newValue);
 });
 </script>
 
