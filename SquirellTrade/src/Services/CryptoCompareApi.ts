@@ -1,7 +1,9 @@
 import axios from "axios";
 import {defineStore} from "pinia";
+const api_key = import.meta.env.VITE_CRYPTO_COMPARE_API_KEY
+const news = import.meta.env.VITE_NEWS_ENDPOINT
 
-// Define enum for sortOrder
+
 export enum SortOrderEnum {
   Latest = "latest",
   Popular = "popular"
@@ -9,8 +11,7 @@ export enum SortOrderEnum {
 
 export const useCryptoCompareApiStore = defineStore('crypto', () => {
   function getNewsRequest(sortOrder: SortOrderEnum = SortOrderEnum.Latest){
-    let API_KEY = "c43a254cf394cdc743d36733fcf13f2ee5b3d2bb478a859d38c7a4b2224bbe97"; //TODO: add to .env
-    let URL = `https://min-api.cryptocompare.com/data/v2/news/?lang=EN&api_key=${API_KEY}&sortOrder=${sortOrder}`;
+    let URL = `${news}&api_key=${api_key}&sortOrder=${sortOrder}`;
     return axios.get(URL);
   }
 
