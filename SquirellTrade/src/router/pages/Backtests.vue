@@ -13,7 +13,8 @@ const store = useYahooFinanceApiStore();
 
 
 async function downloadData(){
-   const jsonData = await store.getRawData("NVDA","1h","1d");
+   const jsonData = JSON.stringify(await store.getRawData("NVDA","1h","1d"));
+   console.log(jsonData)
   switch (selectedFormat.value){
     case("XML"):
       downloadXml(jsonData);
@@ -27,22 +28,22 @@ async function downloadData(){
 
 }
 
-function convertJsonToCsv(data: string){
+function convertJsonToCsv(data: string) {
   try {
     // Parse JSON data
     const jsonData = JSON.parse(data);
 
-    const headers = ["timestamp", ...Object.keys(jsonData.chart.result[0].indicators.quote[0])];
+    const headers = ["timestamp", ...Object.keys(jsonData.data[0])];
 
-    const rows = jsonData.chart.result[0].timestamp.map((timestamp: string, index: string | number) => {
-      return [timestamp, ...headers.slice(1).map(header => {
+    const rows = jsonData.data.map((entry: any) => {
+      return headers.map(header => {
         // Handle special characters in values
-        let value = jsonData.chart.result[0].indicators.quote[0][header][index];
+        let value = entry[header];
         if (typeof value === 'string') {
           value = `"${value.replace(/"/g, '""')}"`;
         }
         return value;
-      })].join(',');
+      }).join(',');
     });
 
     // Join headers and rows
@@ -53,6 +54,7 @@ function convertJsonToCsv(data: string){
     throw error;
   }
 }
+
 
 
 function downloadCsv(data: any){
