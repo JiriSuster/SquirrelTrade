@@ -1,20 +1,15 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
-import {Builder} from "xml2js";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
+import exportFromJSON from "export-from-json";
 
 const selectedTimeFrame = ref("1D");
 const selectedFormat = ref("JSON");
 const store = useYahooFinanceApiStore();
 
-//const tempData = '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"NVDA","exchangeName":"NMS","fullExchangeName":"NasdaqGS","instrumentType":"EQUITY","firstTradeDate":917015400,"regularMarketTime":1714766407,"hasPrePostMarketData":true,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezoneName":"America/New_York","regularMarketPrice":887.89,"fiftyTwoWeekHigh":892.81,"fiftyTwoWeekLow":870.4,"regularMarketDayHigh":892.81,"regularMarketDayLow":870.4,"regularMarketVolume":39595568,"chartPreviousClose":858.17,"previousClose":858.17,"scale":3,"priceHint":2,"currentTradingPeriod":{"pre":{"timezone":"EDT","start":1714723200,"end":1714743000,"gmtoffset":-14400},"regular":{"timezone":"EDT","start":1714743000,"end":1714766400,"gmtoffset":-14400},"post":{"timezone":"EDT","start":1714766400,"end":1714780800,"gmtoffset":-14400}},"tradingPeriods":[[{"timezone":"EDT","start":1714743000,"end":1714766400,"gmtoffset":-14400}]],"dataGranularity":"1h","range":"1d","validRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]},"timestamp":[1714743000,1714746600,1714750200,1714753800,1714757400,1714761000,1714764600,1714766400],"indicators":{"quote":[{"volume":[13341628,5760484,4067185,4038656,3757541,4036069,2798449,0],"close":[878.6199951171875,880.2459106445312,885.4099731445312,888.239990234375,891.219970703125,888.6300048828125,887.8699951171875,887.8900146484375],"high":[889.474609375,885.4000244140625,887.469970703125,891.0999755859375,892,892.8099975585938,889.2999267578125,887.8900146484375],"open":[877.8900146484375,878.8699951171875,880.5,885.5626831054688,888.239990234375,891.2650146484375,888.780029296875,887.8900146484375],"low":[870.4000854492188,875.2600708007812,879.8900146484375,884.4801025390625,886.0999755859375,886.0200805664062,885.969970703125,887.8900146484375]}]}}],"error":null}}';
-
-
-
 async function downloadData(){
-   const jsonData = JSON.stringify(await store.getRawData("NVDA","1h","1d"));
-   console.log(jsonData)
+  const jsonData = await store.getRawData("NVDA","1h","1d");
   switch (selectedFormat.value){
     case("XML"):
       downloadXml(jsonData);
@@ -25,76 +20,24 @@ async function downloadData(){
     default:
       downloadJson(jsonData);
   }
-
 }
 
-function convertJsonToCsv(data: string) {
-  try {
-    // Parse JSON data
-    const jsonData = JSON.parse(data);
-
-    const headers = ["timestamp", ...Object.keys(jsonData.data[0])];
-
-    const rows = jsonData.data.map((entry: any) => {
-      return headers.map(header => {
-        // Handle special characters in values
-        let value = entry[header];
-        if (typeof value === 'string') {
-          value = `"${value.replace(/"/g, '""')}"`;
-        }
-        return value;
-      }).join(',');
-    });
-
-    // Join headers and rows
-    return [headers.join(','), ...rows].join('\n');
-
-  } catch (error) {
-    console.error('Error converting JSON to CSV:', error);
-    throw error;
-  }
+function downloadCsv(data : any) {
+  const fileName = data.symbol; // TODO: Maybe add interval and range to the filename?
+  const exportType = exportFromJSON.types.csv;
+  exportFromJSON({ data: data.data, fileName, exportType });
 }
 
-
-
-function downloadCsv(data: any){
-  data = convertJsonToCsv(data);
-  const blob = new Blob([data], { type: 'application/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'data.csv';
-  document.body.appendChild(link);
-  link.click();
-  window.URL.revokeObjectURL(url);
+function downloadXml(data: any){
+  const fileName = data.symbol;
+  const exportType =  exportFromJSON.types.xml;
+  exportFromJSON({ data, fileName, exportType });
 }
 
-function convertJsonToXml(data: any){
-  const builder = new Builder();
-  return builder.buildObject(data);
-}
-
-function downloadXml(data: string){
-  data = convertJsonToXml(data);
-  const blob = new Blob([data], { type: 'application/xml' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'data.xml';
-  document.body.appendChild(link);
-  link.click();
-  window.URL.revokeObjectURL(url);
-}
-
-function downloadJson(data: string){
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'data.json';
-  document.body.appendChild(link);
-  link.click();
-  window.URL.revokeObjectURL(url);
+function downloadJson(data: any){
+  const fileName = data.symbol;
+  const exportType =  exportFromJSON.types.json;
+  exportFromJSON({ data, fileName, exportType });
 }
 
 </script>
