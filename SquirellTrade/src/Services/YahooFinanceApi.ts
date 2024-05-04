@@ -59,26 +59,14 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
     try {
       const response = await axios.get(url);
       const data = response.data;
-
-      const json_data = [];
-      for (const entry of data) {
-        const [timestamp, open, high, low, close] = entry;
-        const json_entry = {
-          timestamp: timestamp,
-          open: open,
-          high: high,
-          low: low,
-          close: close
-        };
-        json_data.push(json_entry);
-      }
-      return JSON.stringify(json_data);
+      return JSON.stringify(data)
 
     } catch (error) {
       console.error('Error fetching data from Yahoo Finance:', error);
       throw new Error('Error fetching data from Yahoo Finance.');
     }
   }
+
 
   return {getChartData, search, getRawData}
 })
