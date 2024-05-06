@@ -3,13 +3,14 @@
 import {ref} from "vue";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
 import exportFromJSON from "export-from-json";
-
+import Search from "@/components/search/Search.vue";
+const selectedSymbol = ref("BTC-USD");
 const selectedTimeFrame = ref("1D");
 const selectedFormat = ref("JSON");
 const store = useYahooFinanceApiStore();
 
 async function downloadData(){
-  const jsonData = await store.getRawData("NVDA","1h","1d");
+  const jsonData = await store.getRawData(selectedSymbol.value,"1m",selectedTimeFrame.value);
   switch (selectedFormat.value){
     case("XML"):
       downloadXml(jsonData);
@@ -40,6 +41,10 @@ function downloadJson(data: any){
   exportFromJSON({ data, fileName, exportType });
 }
 
+const selectSymbol = (symbol : any) => {
+  selectedSymbol.value = symbol
+};
+
 </script>
 
 <template>
@@ -48,15 +53,7 @@ function downloadJson(data: any){
       <h1>Backtests</h1>
       <v-col cols="12" sm="6">
         <p>Stock</p>
-        <v-text-field
-          append-inner-icon="mdi-magnify"
-          class="mt-2 w-100"
-          v-model="search"
-          label="Search"
-          outlined
-          placeholder="Type here to search..."
-        ></v-text-field>
-
+        <Search :select-symbol="selectSymbol"></Search>
         <p class="mb-2">Timeframe</p>
         <v-row>
           <v-radio-group class="ml-2" v-model="selectedTimeFrame" inline>

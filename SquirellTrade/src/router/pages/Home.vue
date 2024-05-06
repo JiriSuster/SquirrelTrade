@@ -3,12 +3,7 @@
     <v-row justify="center">
       <v-col cols="10" class="text-center">
         <h1>Trade with us</h1>
-        <SearchBar @search="searchFunction"/>
-        <SearchResults
-          v-if="searchResults"
-          :searchResults="searchResults"
-          @symbol-selected="selectSymbol"
-        />
+        <Search :select-symbol="selectSymbol"></Search>
       </v-col>
     </v-row>
 
@@ -55,14 +50,11 @@
 </template>
 
 <script setup>
-import {ref, watch} from "vue";
+import {ref} from "vue";
 import HighchartsStock from '@/components/StockChart.vue';
 import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
-import SearchResults from "@/components/SearchResults.vue";
-import SearchBar from "@/components/Search.vue"
-
+import Search from "@/components/search/Search.vue";
 const search = ref('');
-const searchResults = ref([]);
 
 //example of filling chart with BTC-USD data
 const store = useYahooFinanceApiStore();
@@ -77,18 +69,6 @@ store.getChartData("BTC-USD", "1m", "1d").then(candlestickData => {
   }];
 });
 //////////////////////////////////////////////
-
-const searchFunction = (query) => {
-  store.search(query).then(value => {
-    searchResults.value = value.quotes;
-  });
-};
-
-
-watch(search, (newValue) => {
-  searchFunction(newValue);
-});
-
 
 const selectSymbol = (symbol) => {
   store.getChartData(symbol, "1m", "1d").then(candlestickData => {
