@@ -3,7 +3,7 @@
     <v-col cols="10">
       <v-row justify="center">
         <v-col v-for="result in searchResults" :key="result.symbol" cols="12">
-          <v-card class="" outlined @click="selectSymbol(result.symbol)">
+          <v-card class="" outlined @click="handleSymbolClick(result.symbol)">
             <v-card-text>
               <div>{{ result.symbol }} - {{ result.shortname }}</div>
             </v-card-text>
@@ -23,7 +23,8 @@ defineProps({
 
 const emit = defineEmits();
 
-const selectSymbol = (symbol) => {
+const handleSymbolClick = (symbol) => {
   emit('symbol-selected', symbol);
+  emit('clear-results');
 };
 </script>

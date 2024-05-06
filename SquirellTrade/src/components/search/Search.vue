@@ -4,6 +4,7 @@
     v-if="searchResults"
     :searchResults="searchResults"
     @symbol-selected="selectSymbol"
+    @clear-results="clearSearchResults"
   />
 </template>
 
@@ -27,8 +28,11 @@ const searchFunction = (query) => {
   });
 };
 
+const clearSearchResults = () => {
+  searchResults.value = [];
+};
+
 watch(search, (newValue) => {
   searchFunction(newValue);
 });
-
 </script>
