@@ -14,7 +14,11 @@
       </v-col>
     </v-row>
 
-    <SearchResults v-if="searchResults" :searchResults="searchResults" />
+    <SearchResults
+      v-if="searchResults"
+      :searchResults="searchResults"
+      @symbol-selected="selectSymbol"
+    />
 
     <h1>World markets</h1>
     <div class="d-flex justify-space-between">
@@ -58,7 +62,7 @@
 </template>
 
 <script setup>
-import {reactive, ref, watch} from "vue";
+import {ref, watch} from "vue";
 import HighchartsStock from '@/components/StockChart.vue';
 import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import SearchResults from "@/components/SearchResults.vue";
@@ -78,7 +82,7 @@ store.getChartData("BTC-USD", "1m", "1d").then(candlestickData => {
     data: candlestickData
   }];
 });
-
+//////////////////////////////////////////////
 
 const searchFunction = (query) => {
   store.search(query).then(value => {
@@ -90,5 +94,16 @@ const searchFunction = (query) => {
 watch(search, (newValue) => {
   searchFunction(newValue);
 });
+
+
+const selectSymbol = (symbol) => {
+  store.getChartData(symbol, "1h", "1wk").then(candlestickData => {
+    chartOptions.value.series = [{
+      type: 'candlestick',
+      name: symbol,
+      data: candlestickData
+    }];
+  });
+};
 </script>
 

@@ -20,7 +20,7 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
   }
 
   async function fetchData(symbol: string, interval: string, range: string) {
-    const url = `${proxyEnv}${chartEnv}${symbol}?interval=${interval}&range=${range}}`;
+    const url = `${proxyEnv}${chartEnv}${symbol}?interval=${interval}&range=${range}`;
     try {
       const response = await axios.get(url);
       const data = response.data;
