@@ -19,7 +19,7 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
     }
   }
 
-  async function fetchData(symbol: string, interval: string, range: string) {
+  async function fetchData(symbol: string, interval: string, range: string, format: string) {
     const url = `${proxyEnv}${chartEnv}${symbol}?interval=${interval}&range=${range}`;
     try {
       const response = await axios.get(url);
@@ -34,15 +34,24 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
         const lowPrices = data.chart.result[0].indicators.quote[0].low;
         const closePrices = data.chart.result[0].indicators.quote[0].close;
 
-        const candlestickData = timestamps.map((timestamp: number, i: number) => ([
-          timestamp * 1000,
-          openPrices[i],
-          highPrices[i],
-          lowPrices[i],
-          closePrices[i]
-        ]));
+        if(format == "chart") { //array of arrays for highcharts
+          return timestamps.map((timestamp: number, i: number) => ([
+            timestamp * 1000,
+            openPrices[i],
+            highPrices[i],
+            lowPrices[i],
+            closePrices[i]
+          ]));
+        }else if (format == "backtests"){ //array of objects for exportFromJSON
+          return timestamps.map((timestamp: number, i: number) => ({
+            timestamp: timestamp * 1000,
+            open: openPrices[i],
+            high: highPrices[i],
+            low: lowPrices[i],
+            close: closePrices[i]
+          }));
+        }
 
-        return candlestickData;
       }
     } catch (error) {
       console.error('Error fetching data from Yahoo Finance:', error);
@@ -51,11 +60,11 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
   }
 
   async function getChartData(symbol: string, interval: string, range: string) {
-    return await fetchData(symbol,interval,range);
+    return await fetchData(symbol,interval,range,"chart");
   }
 
   async function getRawData(symbol: string, interval: string, range: string) {
-    const data = await fetchData(symbol,interval,range);
+    const data = await fetchData(symbol,interval,range,"backtests");
     return { symbol, data };
   }
 
