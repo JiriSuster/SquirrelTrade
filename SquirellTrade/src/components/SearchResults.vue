@@ -14,17 +14,16 @@
   </v-row>
 </template>
 
-<script>
-import { ref } from "vue";
+<script setup>
+import {defineProps } from "vue";
 
-export default {
-  props: {
-    searchResults: Array
-  },
-  methods: {
-    selectSymbol(symbol) {
-      this.$emit('symbol-selected', symbol);
-    }
-  }
-}
+defineProps({
+  searchResults: Array
+});
+
+const emit = defineEmits();
+
+const selectSymbol = (symbol) => {
+  emit('symbol-selected', symbol);
+};
 </script>

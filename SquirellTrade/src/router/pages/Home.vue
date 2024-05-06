@@ -3,22 +3,15 @@
     <v-row justify="center">
       <v-col cols="10" class="text-center">
         <h1>Trade with us</h1>
-        <v-text-field
-          append-inner-icon="mdi-magnify"
-          class="ma-5 w-100"
-          v-model="search"
-          label="Search"
-          outlined
-          placeholder="Type here to search..."
-        ></v-text-field>
+        <SearchBar @search="searchFunction"/>
+        <SearchResults
+          v-if="searchResults"
+          :searchResults="searchResults"
+          @symbol-selected="selectSymbol"
+        />
       </v-col>
     </v-row>
 
-    <SearchResults
-      v-if="searchResults"
-      :searchResults="searchResults"
-      @symbol-selected="selectSymbol"
-    />
 
     <h1>World markets</h1>
     <div class="d-flex justify-space-between">
@@ -66,6 +59,7 @@ import {ref, watch} from "vue";
 import HighchartsStock from '@/components/StockChart.vue';
 import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import SearchResults from "@/components/SearchResults.vue";
+import SearchBar from "@/components/Search.vue"
 
 const search = ref('');
 const searchResults = ref([]);
@@ -97,7 +91,7 @@ watch(search, (newValue) => {
 
 
 const selectSymbol = (symbol) => {
-  store.getChartData(symbol, "1h", "1wk").then(candlestickData => {
+  store.getChartData(symbol, "1m", "1d").then(candlestickData => {
     chartOptions.value.series = [{
       type: 'candlestick',
       name: symbol,
