@@ -13,17 +13,17 @@ interface SourceInfo {
 interface NewsData {
   id: string;
   guid: string;
-  publishedOn: number;
-  imageUrl: string;
+  published_on: number;
+  imageurl: string;
   title: string;
   url: string;
   body: string;
   tags: string;
   lang: string;
-  upVotes: string;
-  downVotes: string;
+  upvotes: string;
+  downvotes: string;
   categories: string[];
-  sourceInfo: SourceInfo;
+  source_info: SourceInfo;
   source: string;
 }
 
@@ -44,7 +44,7 @@ const props = defineProps<{ newsData: NewsData }>();
   >
     <v-img
       height="200px"
-      :src="newsData.imageUrl"
+      :src="newsData.imageurl"
       alt="Article Image"
       cover
     ></v-img>
