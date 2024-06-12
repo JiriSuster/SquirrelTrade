@@ -9,7 +9,9 @@ const selectedTimeFrame = ref("1D");
 const selectedFormat = ref("JSON");
 const store = useYahooFinanceApiStore();
 
+const isDownloading = ref(false);
 async function downloadData(){
+    isDownloading.value = true
   const jsonData = await store.getRawData(selectedSymbol.value,"1d",selectedTimeFrame.value);
   switch (selectedFormat.value){
     case("XML"):
@@ -21,6 +23,9 @@ async function downloadData(){
     default:
       downloadJson(jsonData);
   }
+    setTimeout(() => {
+        isDownloading.value = false;
+    }, 2000);
 }
 
 function downloadCsv(data : any) {
@@ -44,6 +49,7 @@ function downloadJson(data: any){
 const selectSymbol = (symbol : any) => {
   selectedSymbol.value = symbol
 };
+
 
 </script>
 
@@ -75,7 +81,9 @@ const selectSymbol = (symbol : any) => {
           <v-btn v-bind:variant="selectedFormat === 'XML' ? 'elevated' : 'outlined'" @click="selectedFormat = 'XML'" color="yellow-darken-2" class="mr-2 pa-1" size="large" density="compact" rounded="xl" >XML</v-btn>
         </v-row>
         <v-row>
-          <v-btn class="ml-2 mb-2 mt-5 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl"  prepend-icon="mdi-download" @click="downloadData()">Download</v-btn>
+            <v-btn :color="isDownloading ? 'green-darken-2' : 'yellow-darken-2'" class="mb-2 mt-5 pl-4 pr-4" prepend-icon="mdi-download" size="large" density="compact" rounded="xl" @click="downloadData()">
+               Download
+            </v-btn>
         </v-row>
       </v-col>
 
@@ -84,5 +92,11 @@ const selectSymbol = (symbol : any) => {
 </template>
 
 <style scoped>
+.v-icon {
+    transition: color 0.3s ease;
+}
 
+.downloading .v-icon::before {
+    color: green !important;
+}
 </style>

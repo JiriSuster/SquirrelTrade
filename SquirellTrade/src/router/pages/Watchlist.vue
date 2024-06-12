@@ -22,7 +22,7 @@ const watchStore = useWatchlistStore();
       </div>
 
       <h1>Watchlist</h1>
-      
+
 
 
 
