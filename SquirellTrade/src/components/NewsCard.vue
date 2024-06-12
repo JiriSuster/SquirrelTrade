@@ -3,15 +3,37 @@
 
 import {ref} from "vue";
 
+
+interface SourceInfo {
+  name: string;
+  img: string;
+  lang: string;
+}
+
+interface NewsData {
+  id: string;
+  guid: string;
+  publishedOn: number;
+  imageUrl: string;
+  title: string;
+  url: string;
+  body: string;
+  tags: string;
+  lang: string;
+  upVotes: string;
+  downVotes: string;
+  categories: string[];
+  sourceInfo: SourceInfo;
+  source: string;
+}
+
 const show = ref(false);
 
 function redirectToURL(url: string){
   window.open(url, '_blank')
 }
 
-const props = defineProps({
-  newsData: String
-})
+const props = defineProps<{ newsData: NewsData }>();
 </script>
 
 <template>
@@ -22,7 +44,7 @@ const props = defineProps({
   >
     <v-img
       height="200px"
-      :src="newsData.imageurl"
+      :src="newsData.imageUrl"
       alt="Article Image"
       cover
     ></v-img>
@@ -31,8 +53,9 @@ const props = defineProps({
       {{newsData.title}}
     </v-card-title>
 
-    <v-card-subtitle>
-      {{newsData.categories}}
+
+    <v-card-subtitle v-if="newsData.categories.length > 0">
+      {{ newsData.categories }}
     </v-card-subtitle>
 
     <v-card-actions>
