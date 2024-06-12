@@ -3,10 +3,13 @@
 import HighchartsStock from "@/components/StockChart.vue";
 import {ref} from "vue";
 
-
+//dodelat
 const chartOptions = ref({
   series: []
 });
+
+const stockAmount = ref<number>(0)
+
 </script>
 
 
@@ -28,12 +31,12 @@ const chartOptions = ref({
 
         <h3 class="mt-5">Quantity</h3>
 
-
         <v-responsive
           class="mt-4 mb-4"
           max-width="500"
         >
           <v-text-field
+            v-model="stockAmount"
             type="number"
             variant="filled"
             hide-details="auto"
