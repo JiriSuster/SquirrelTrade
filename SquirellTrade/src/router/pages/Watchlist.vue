@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import {useWatchlistStore} from "@/store/WatchListStocks";
+
+const watchStore = useWatchlistStore();
 
 </script>
 
@@ -19,6 +22,10 @@
       </div>
 
       <h1>Watchlist</h1>
+      
+
+
+
     </v-responsive>
   </v-container>
 </template>

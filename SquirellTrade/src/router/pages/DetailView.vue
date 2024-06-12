@@ -2,6 +2,7 @@
 
 import HighchartsStock from "@/components/StockChart.vue";
 import {ref} from "vue";
+import {useWatchlistStore} from "@/store/WatchListStocks";
 
 //dodelat
 const chartOptions = ref({
@@ -9,6 +10,12 @@ const chartOptions = ref({
 });
 
 const stockAmount = ref<number>(0)
+
+const watchStore = useWatchlistStore();
+//docasne
+
+const symbol = "nvda"
+const heartColor = ref("red-darken-2")
 
 </script>
 
@@ -23,9 +30,12 @@ const stockAmount = ref<number>(0)
           <h1>345.0 USD</h1>
           <p class="ml-4">28.2 %</p>
         </div>
+        <v-btn class="mb-2 mt-4 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" @click="watchStore.toggleFavorite(symbol); ">
+            <template v-slot:prepend>
+                <v-icon icon="mdi-heart" :color="watchStore.isFavorite(symbol) ? 'red-darken-4' : 'white'"></v-icon>
+            </template>
 
-        <v-btn class="mb-2 mt-4 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus">
-          Add to watchlist
+            Add to watchlist
         </v-btn>
 
 

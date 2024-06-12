@@ -10,7 +10,7 @@ const selectedFormat = ref("JSON");
 const store = useYahooFinanceApiStore();
 
 async function downloadData(){
-  const jsonData = await store.getRawData(selectedSymbol.value,"1m",selectedTimeFrame.value);
+  const jsonData = await store.getRawData(selectedSymbol.value,"1d",selectedTimeFrame.value);
   switch (selectedFormat.value){
     case("XML"):
       downloadXml(jsonData);
@@ -53,6 +53,9 @@ const selectSymbol = (symbol : any) => {
       <h1>Backtests</h1>
       <v-col cols="12" sm="6">
         <p>Stock</p>
+          <p>{{selectedFormat}}</p>
+          <p>{{selectSymbol}}</p>
+          <p>{{selectedTimeFrame}}</p>
         <Search :select-symbol="selectSymbol"></Search>
         <p class="mb-2">Timeframe</p>
         <v-row>
