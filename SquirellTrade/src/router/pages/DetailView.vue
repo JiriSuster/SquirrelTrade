@@ -1,21 +1,38 @@
 <script setup lang="ts">
 
 import HighchartsStock from "@/components/StockChart.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useWatchlistStore} from "@/store/WatchListStocks";
+import {OwnedStock, useMyOwnedStocks} from "@/store/MyOwnedStocks";
 
 //dodelat
 const chartOptions = ref({
   series: []
 });
 
-const stockAmount = ref<number>(0)
-
 const watchStore = useWatchlistStore();
+const ownedStocksStore = useMyOwnedStocks()
+
+const selectedStockInfo = ref<OwnedStock>({id: "",date: "", price: 100, quantity: 0, symbol: "NVDA"})
+
+function orderStock() {
+
+  selectedStockInfo.value = {
+    ...selectedStockInfo.value,
+    date: new Date().toLocaleString()
+  };
+  ownedStocksStore.addStock(selectedStockInfo.value);
+}
+
+
 //docasne
 
 const symbol = "nvda"
 const heartColor = ref("red-darken-2")
+
+
+
+
 
 </script>
 
@@ -34,7 +51,6 @@ const heartColor = ref("red-darken-2")
             <template v-slot:prepend>
                 <v-icon icon="mdi-heart" :color="watchStore.isFavorite(symbol) ? 'red-darken-4' : 'white'"></v-icon>
             </template>
-
             Add to watchlist
         </v-btn>
 
@@ -46,7 +62,7 @@ const heartColor = ref("red-darken-2")
           max-width="500"
         >
           <v-text-field
-            v-model="stockAmount"
+            v-model="selectedStockInfo.quantity"
             type="number"
             variant="filled"
             hide-details="auto"
@@ -54,10 +70,11 @@ const heartColor = ref("red-darken-2")
           ></v-text-field>
         </v-responsive>
 
-        <v-btn class="mb-2 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus">
+        <v-btn class="mb-2 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus" @click="orderStock()">
           Order
         </v-btn>
       </v-col>
+
 
 
       <v-col cols="12" md="6">

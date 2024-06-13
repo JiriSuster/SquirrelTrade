@@ -5,14 +5,14 @@ import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
 import exportFromJSON from "export-from-json";
 import Search from "@/components/search/Search.vue";
 const selectedSymbol = ref("BTC-USD");
-const selectedTimeFrame = ref("1D");
+const selectedTimeFrame = ref("1d");
 const selectedFormat = ref("JSON");
 const store = useYahooFinanceApiStore();
 
 const isDownloading = ref(false);
 async function downloadData(){
     isDownloading.value = true
-  const jsonData = await store.getRawData(selectedSymbol.value,"1d",selectedTimeFrame.value);
+  const jsonData = await store.getRawData(selectedSymbol.value,selectedTimeFrame.value,"3mo");
   switch (selectedFormat.value){
     case("XML"):
       downloadXml(jsonData);
@@ -59,18 +59,14 @@ const selectSymbol = (symbol : any) => {
       <h1>Backtests</h1>
       <v-col cols="12" sm="6">
         <p>Stock</p>
-          <p>{{selectedFormat}}</p>
-          <p>{{selectSymbol}}</p>
-          <p>{{selectedTimeFrame}}</p>
         <Search :select-symbol="selectSymbol"></Search>
         <p class="mb-2">Timeframe</p>
         <v-row>
           <v-radio-group class="ml-2" v-model="selectedTimeFrame" inline>
-            <v-radio label="1D" value="1D" @change="selectedTimeFrame = '1D'"></v-radio>
-            <v-radio label="5D" value="5D" @change="selectedTimeFrame = '5D'"></v-radio>
-            <v-radio label="1M" value="1M" @change="selectedTimeFrame = '1M'"></v-radio>
-            <v-radio label="3M" value="3M" @change="selectedTimeFrame = '3M'"></v-radio>
-            <v-radio label="1Y" value="1Y" @change="selectedTimeFrame = '1Y'"></v-radio>
+            <v-radio label="1D" value="1d" @change="selectedTimeFrame = '1d'"></v-radio>
+            <v-radio label="5D" value="5d" @change="selectedTimeFrame = '5d'"></v-radio>
+            <v-radio label="1WK" value="1wk" @change="selectedTimeFrame = '1wk'"></v-radio>
+            <v-radio label="1MO" value="1mo" @change="selectedTimeFrame = '1mo'"></v-radio>
           </v-radio-group>
         </v-row>
 

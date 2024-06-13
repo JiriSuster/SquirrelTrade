@@ -1,7 +1,7 @@
 <template>
   <v-text-field
     append-inner-icon="mdi-magnify"
-    class="ma-5 w-100"
+    class="w-100"
     v-model="search"
     label="Search"
     outlined

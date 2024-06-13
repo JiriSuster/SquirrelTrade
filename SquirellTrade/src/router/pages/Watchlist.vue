@@ -35,12 +35,12 @@ const watchStore = useWatchlistStore();
         </v-list-item>
 
         <v-list lines="one">
-          <v-list-item class="custom-list-item"
+          <v-list-item class="custom-list-item mb-1"
               v-for="(symbol,index) in watchStore.favoriteSymbols"
               :key="index"
           >
             <div class="d-flex justify-space-between align-center pa-0">
-              <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ symbol }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
