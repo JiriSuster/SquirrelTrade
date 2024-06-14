@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import HighchartsStock from "@/components/StockChart.vue";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useWatchlistStore} from "@/store/WatchListStocks";
 import {OwnedStock, useMyOwnedStocks} from "@/store/MyOwnedStocks";
 
@@ -24,6 +24,9 @@ function orderStock() {
   ownedStocksStore.addStock(selectedStockInfo.value);
 }
 
+const isQuantityInvalid = computed(() => {
+  return selectedStockInfo.value.quantity <= 0;
+});
 
 //docasne
 
@@ -70,11 +73,10 @@ const heartColor = ref("red-darken-2")
           ></v-text-field>
         </v-responsive>
 
-        <v-btn class="mb-2 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus" @click="orderStock()">
+        <v-btn class="mb-2 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus" :disabled="isQuantityInvalid" @click="orderStock()">
           Order
         </v-btn>
       </v-col>
-
 
 
       <v-col cols="12" md="6">
