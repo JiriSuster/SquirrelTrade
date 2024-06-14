@@ -1,19 +1,64 @@
 <script setup lang="ts">
 
 import HighchartsStock from "@/components/StockChart.vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
+import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import {useWatchlistStore} from "@/store/WatchListStocks";
 import {OwnedStock, useMyOwnedStocks} from "@/store/MyOwnedStocks";
+import {useRoute} from "vue-router";
+
+interface CandlestickData {
+  type: string;
+  name: string;
+  data: any;
+}
+
+interface ChartOptions {
+  value: {
+    series: CandlestickData[];
+  };
+}
+
+// Assuming chartOptions is defined somewhere
+
 
 //dodelat
-const chartOptions = ref({
+const chartOptions : ChartOptions = ref({
   series: []
 });
 
+const fetchChartData = (symbol: string) => {
+  yahooStore.getChartData(symbol, "1m", "1d").then(candlestickData => {
+    chartOptions.value.series = [{
+      type: 'candlestick',
+      name: "",
+      data: candlestickData
+    }];
+  });
+};
+const yahooStore = useYahooFinanceApiStore()
 const watchStore = useWatchlistStore();
 const ownedStocksStore = useMyOwnedStocks()
 
-const selectedStockInfo = ref<OwnedStock>({id: "",date: "", price: 100, quantity: 0, symbol: "NVDA"})
+const route = useRoute();
+const symbol = route.query.symbol ? route.query.symbol.toString() : "NVDA"
+fetchChartData(symbol)
+var name = ref("")
+var price = ref("")
+var percentage = ref("")
+yahooStore.getSymbolInfo(symbol).then(value => {
+  name.value = value.shortName
+})
+
+yahooStore.getLatestPrice(symbol).then(value => {
+  price.value = value.toString()
+})
+
+yahooStore.getPercentageChangeFromYesterday(symbol).then(value => {
+  percentage.value = value.toString()
+})
+
+const selectedStockInfo = ref<OwnedStock>({id: "",date: "", price: 100, quantity: 0, symbol: symbol})
 
 function orderStock() {
 
@@ -30,7 +75,7 @@ const isQuantityInvalid = computed(() => {
 
 //docasne
 
-const symbol = "nvda"
+
 const heartColor = ref("red-darken-2")
 
 
@@ -44,17 +89,17 @@ const heartColor = ref("red-darken-2")
   <v-container>
     <v-row>
       <v-col cols="12" md="6">
-        <h1>NVDA</h1>
-        <p>Nvidia Corporation</p>
+        <h1>{{symbol}}</h1>
+        <p>{{name}}</p>
         <div class="d-flex align-center">
-          <h1>345.0 USD</h1>
-          <p class="ml-4">28.2 %</p>
+          <h1>{{price}} USD</h1>
+          <p class="ml-4">{{ percentage }} %</p>
         </div>
         <v-btn class="mb-2 mt-4 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" @click="watchStore.toggleFavorite(symbol); ">
-            <template v-slot:prepend>
-                <v-icon icon="mdi-heart" :color="watchStore.isFavorite(symbol) ? 'red-darken-4' : 'white'"></v-icon>
-            </template>
-            Add to watchlist
+          <template v-slot:prepend>
+            <v-icon icon="mdi-heart" :color="watchStore.isFavorite(symbol) ? 'red-darken-4' : 'white'"></v-icon>
+          </template>
+          Add to watchlist
         </v-btn>
 
 

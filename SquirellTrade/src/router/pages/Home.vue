@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="12" sm="8" class="text-center">
         <h1>Trade with us</h1>
-        <Search :select-symbol="selectSymbol(selectedMarket)"></Search>
+        <Search :select-symbol="selectSymbol"></Search>
       </v-col>
     </v-row>
 
@@ -17,7 +17,7 @@
                               rounded="xl"
                               prepend-icon="mdi-domain"
                               class="pr-10 pl-10 fixed-btn-width"
-                              @click="selectedMarket = market"
+                              @click="selectMarket(market)"
                               :color="isSelectedMarket(market) ? 'yellow-darken-2' : ''"
                       >
                           {{ market.name }}
@@ -73,6 +73,7 @@ import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import Search from "@/components/search/Search.vue";
 import {useAlpacaApiStore} from "@/Services/AlpacaMarketApi";
 import GainerLoserListItem from "@/components/GainerLoserListItem.vue";
+import router from "@/router";
 
 const markets = ref([
     {name: "S&P500",symbol: "^GSPC"},
@@ -91,22 +92,25 @@ const store = useYahooFinanceApiStore();
 const chartOptions = ref({
   series: []
 });
-store.getChartData(selectedMarket.value.symbol, "1m", "1d").then(candlestickData => {
-  chartOptions.value.series = [{
-    type: 'candlestick', //can be line
-    name: selectedMarket.value.name,
-    data: candlestickData
-  }];
-});
 
-const selectSymbol = (market) => {
-  store.getChartData(market.symbol, "1m", "1d").then(candlestickData => {
+const fetchChartData = (symbol, name) => {
+  store.getChartData(symbol, "1m", "1d").then(candlestickData => {
     chartOptions.value.series = [{
       type: 'candlestick',
-      name: market.name,
+      name: name,
       data: candlestickData
     }];
   });
+};
+fetchChartData(selectedMarket.value.symbol, selectedMarket.value.name);
+
+const selectMarket = (market) => {
+  selectedMarket.value = market;
+  fetchChartData(market.symbol, market.name);
+};
+const selectSymbol = (symbol) => {
+  //fetchChartData(symbol, symbol);
+  router.push({ name: 'detail', query: { symbol } });
 };
 
 //gainers and loosers

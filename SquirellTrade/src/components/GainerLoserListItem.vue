@@ -41,7 +41,7 @@ const percentageColor = computed(() => {
 });
 
 const redirectToDetailView = () => {
-  router.push({ name: 'detail', params: { symbol: props.symbol } });
+  router.push({ name: 'detail', query: { symbol: props.symbol } });
 };
 </script>
 
