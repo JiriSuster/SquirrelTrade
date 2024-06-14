@@ -8,8 +8,8 @@ const LS_FAVORITE_KEY = "owned_stocks";
 export interface OwnedStock {
   id: string
   symbol: string,
-  quantity: Number,
-  price: Number,
+  quantity: number,
+  price: number,
   date: string
 }
 export const useMyOwnedStocks = defineStore("ownedStocks", () => {
@@ -22,8 +22,8 @@ export const useMyOwnedStocks = defineStore("ownedStocks", () => {
     storage.set(ownedStocks.value)
   }
 
-  function sellStock(stock: OwnedStock) {
-    const index = ownedStocks.value.findIndex((s) => s.id === stock.id);
+  function sellStock(id: string) {
+    const index = ownedStocks.value.findIndex((s) => s.id === id);
     if (index !== -1) {
       ownedStocks.value.splice(index, 1);
       storage.set(ownedStocks.value);

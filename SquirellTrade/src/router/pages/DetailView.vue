@@ -44,7 +44,7 @@ const watchStore = useWatchlistStore();
 const ownedStocksStore = useMyOwnedStocks()
 
 const route = useRoute();
-const symbol = route.query.symbol ? route.query.symbol.toString() : "NVDA"
+const symbol = route.query.symbol ? route.query.symbol.toString() : ""
 fetchChartData(symbol)
 var name = ref("")
 var price = ref("")
@@ -76,7 +76,6 @@ const isQuantityInvalid = computed(() => {
   return selectedStockInfo.value.quantity <= 0;
 });
 
-//docasne
 
 
 const heartColor = ref("red-darken-2")

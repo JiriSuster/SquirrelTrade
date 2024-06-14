@@ -1,7 +1,49 @@
 <script setup lang="ts">
 import {useMyOwnedStocks} from "@/store/MyOwnedStocks";
+import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
+import {ref, watchEffect} from "vue";
 
 const ownedStocks = useMyOwnedStocks()
+const yahooStore = useYahooFinanceApiStore()
+
+const stockInfo = ref<{
+    id: string;
+    symbol: string;
+    date: string;
+    quantity: number;
+    price: number;
+    profit: number
+}[]>([]);
+
+
+async function getStockInfo() {
+    stockInfo.value.splice(0)
+    try {
+        for (const stock of ownedStocks.ownedStocks) {
+            const latestPrice = await yahooStore.getLatestPrice(stock.symbol);
+            const currentTotalValue = latestPrice.close * stock.quantity;
+            const initialTotalValue = stock.price * stock.quantity;
+            const profit = currentTotalValue - initialTotalValue;
+
+            stockInfo.value.push({
+                id: stock.id,
+                symbol: stock.symbol,
+                date: stock.date,
+                quantity: stock.quantity,
+                price: stock.price,
+                profit: profit
+            });
+
+        }
+    } catch (error) {
+        console.error('Error fetching prices:', error);
+    }
+}
+
+watchEffect(() => {
+    getStockInfo();
+});
+
 
 </script>
 
@@ -37,7 +79,7 @@ const ownedStocks = useMyOwnedStocks()
 
       <v-list lines="one">
         <v-list-item class="custom-list-item mb-1"
-                     v-for="(stock,index) in ownedStocks.ownedStocks"
+                     v-for="(stock,index) in stockInfo"
                      :key="index"
         >
           <div class="d-flex justify-space-between align-center pa-0">
@@ -45,9 +87,9 @@ const ownedStocks = useMyOwnedStocks()
             <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.date }}</v-col>
             <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.quantity }}</v-col>
             <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.price }}</v-col>
-            <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
+            <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.profit.toFixed(2) }}</v-col>
             <v-col class="d-flex justify-center pa-0" cols="2">
-              <v-btn color="yellow-darken-2"  size="small" density="default" class="ma-1 delete-btn" rounded="xl" @click="ownedStocks.sellStock(stock)">
+              <v-btn color="yellow-darken-2"  size="small" density="default" class="ma-1 delete-btn" rounded="xl" @click="ownedStocks.sellStock(stock.id)">
                 Sell
               </v-btn>
             </v-col>

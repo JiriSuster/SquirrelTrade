@@ -1,7 +1,50 @@
 <script setup lang="ts">
 import {useWatchlistStore} from "@/store/WatchListStocks";
+import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
+import {onMounted, ref, watch, watchEffect} from "vue";
 
 const watchStore = useWatchlistStore();
+const yahooStore = useYahooFinanceApiStore();
+
+const prices = ref<{
+    symbol: string;
+    high: number;
+    low: number;
+    open: number;
+    close: number;
+    lastPrice: number;
+    change: string;
+}[]>([]);
+
+async function getPrices() {
+    try {
+        prices.value.splice(0)
+        for (const symbol of watchStore.favoriteSymbols) {
+            const symbolString = symbol.toString();
+            const latestPrice = await yahooStore.getLatestPrice(symbolString);
+            const latestChange = await yahooStore.getPercentageChangeFromYesterday(symbolString)
+
+            prices.value.push({
+                symbol: symbolString,
+                high: Math.round(latestPrice.high * 100) / 100,
+                low: Math.round(latestPrice.low * 100) / 100,
+                open: Math.round(latestPrice.open * 100) / 100,
+                close: Math.round(latestPrice.close * 100) / 100,
+                lastPrice: Math.round(latestPrice.lastPrice * 100) / 100,
+                change: latestChange
+            });
+
+        }
+    } catch (error) {
+        console.error('Error fetching prices:', error);
+    }
+}
+
+
+watchEffect(() => {
+    getPrices();
+});
+
 
 </script>
 
@@ -36,17 +79,17 @@ const watchStore = useWatchlistStore();
 
         <v-list lines="one">
           <v-list-item class="custom-list-item mb-1"
-              v-for="(symbol,index) in watchStore.favoriteSymbols"
+              v-for="(stock,index) in prices"
               :key="index"
           >
             <div class="d-flex justify-space-between align-center pa-0">
-              <v-col class="d-flex justify-center pa-0" cols="2">{{ symbol }}</v-col>
-              <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
-              <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
-              <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
-              <v-col class="d-flex justify-center pa-0" cols="2">neco</v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.symbol }}</v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.close }}</v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.change}}% </v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.high }}</v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.low }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">
-                <v-btn color="yellow-darken-2"  size="small" density="default" class="ma-1 delete-btn" rounded="xl" @click="watchStore.toggleFavorite(symbol)">
+                <v-btn color="yellow-darken-2"  size="small" density="default" class="ma-1 delete-btn" rounded="xl" @click="watchStore.toggleFavorite(stock.symbol)">
                   Delete
                 </v-btn>
               </v-col>
