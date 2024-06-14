@@ -36,34 +36,43 @@
     </v-row>
 
     <v-row class="mt-5 d-flex justify-space-between">
-      <v-col>
-        <h1>Stock gainers: </h1>
-        <div class="d-flex flex-column">
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-        </div>
-      </v-col>
+      <v-col cols="12" md="6">
 
-      <v-col>
+        <h1>Stock gainers: </h1>
+
+
+          <div v-for="gainer in gainers" :key="gainer.symbol">
+            <GainerLoserListItem
+              :name="gainer.name"
+              :symbol="gainer.symbol"
+              :price="gainer.price"
+              :percentChange="gainer.percent_change"
+            />
+          </div>
+      </v-col>
+        <v-col cols="12" md="6">
         <h1>Stock losers: </h1>
-        <div class="d-flex flex-column">
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-          <v-btn size="x-large" rounded="xl" prepend-icon="mdi-domain" class="ma-2">Sap500</v-btn>
-        </div>
+          <div v-for="loser in losers" :key="loser.symbol">
+            <GainerLoserListItem
+              :name="loser.name"
+              :symbol="loser.symbol"
+              :price="loser.price"
+              :percentChange="loser.percent_change"
+            />
+          </div>
+
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import HighchartsStock from '@/components/StockChart.vue';
 import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import Search from "@/components/search/Search.vue";
+import {useAlpacaApiStore} from "@/Services/AlpacaMarketApi";
+import GainerLoserListItem from "@/components/GainerLoserListItem.vue";
 
 const markets = ref([
     {name: "S&P500",symbol: "^GSPC"},
@@ -100,6 +109,20 @@ const selectSymbol = (market) => {
   });
 };
 
+//gainers and loosers
+const storeAlpa = useAlpacaApiStore();
+const gainersAndLossersList = storeAlpa.getMarketMovers(5)
+
+
+const gainers = ref([]);
+const losers = ref([]);
+
+onMounted(async () => {
+  const storeAlpa = useAlpacaApiStore();
+  const { gainers: fetchedGainers, losers: fetchedLosers } = await storeAlpa.getMarketMovers(5);
+  gainers.value = fetchedGainers;
+  losers.value = fetchedLosers;
+});
 
 
 </script>
