@@ -1,5 +1,10 @@
 <template>
-  <SearchBar @search="searchFunction" />
+  <SearchBar
+    @search="searchFunction"
+    :searchResults="searchResults"
+    @symbol-selected="selectSymbol"
+    @clear-results="clearSearchResults"
+  />
   <SearchResults
     v-if="searchResults.length"
     :searchResults="searchResults"
