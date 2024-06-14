@@ -24,6 +24,9 @@ interface ChartOptions {
 
 //dodelat
 const chartOptions : ChartOptions = ref({
+  rangeSelector: {
+    enabled: false
+  },
   series: []
 });
 

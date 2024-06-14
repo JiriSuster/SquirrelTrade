@@ -90,6 +90,9 @@ const isSelectedMarket = (market) => {
 
 const store = useYahooFinanceApiStore();
 const chartOptions = ref({
+  rangeSelector: {
+    enabled: false
+  },
   series: []
 });
 
