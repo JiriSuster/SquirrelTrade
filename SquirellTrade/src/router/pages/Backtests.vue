@@ -4,7 +4,7 @@ import {ref} from "vue";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
 import exportFromJSON from "export-from-json";
 import Search from "@/components/search/Search.vue";
-const selectedSymbol = ref("BTC-USD");
+const selectedSymbol = ref("");
 const selectedTimeFrame = ref("1d");
 const selectedFormat = ref("JSON");
 const store = useYahooFinanceApiStore();

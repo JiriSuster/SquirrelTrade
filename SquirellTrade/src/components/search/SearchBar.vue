@@ -27,6 +27,7 @@ watch(search, (newValue) => {
 const handleEnterKey = () => {
   if (props.searchResults.length > 0) {
     emit('symbol-selected', props.searchResults[0].symbol);
+    emit('changebar', props.searchResults[0].symbol);
     emit('clear-results');
   }
 };
