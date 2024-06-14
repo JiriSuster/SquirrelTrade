@@ -15,10 +15,10 @@
 </template>
 
 <script setup>
-import {defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 
-defineProps({
-  searchResults: Array
+const props = defineProps({
+  searchResults: Array,
 });
 
 const emit = defineEmits();

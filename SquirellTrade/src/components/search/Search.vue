@@ -1,7 +1,7 @@
 <template>
-  <SearchBar @search="searchFunction"/>
+  <SearchBar @search="searchFunction" />
   <SearchResults
-    v-if="searchResults"
+    v-if="searchResults.length"
     :searchResults="searchResults"
     @symbol-selected="selectSymbol"
     @clear-results="clearSearchResults"
@@ -9,21 +9,20 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps } from "vue";
-import SearchResults from "@/components/search/SearchResults.vue";
-import SearchBar from "@/components/search/SearchBar.vue";
-import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
+import { ref } from 'vue';
+import SearchResults from '@/components/search/SearchResults.vue';
+import SearchBar from '@/components/search/SearchBar.vue';
+import { useYahooFinanceApiStore } from '@/Services/YahooFinanceApi';
 
-defineProps({
-  selectSymbol : Function
+const props = defineProps({
+  selectSymbol: Function,
 });
 
-const search = ref('');
 const searchResults = ref([]);
 const store = useYahooFinanceApiStore();
 
 const searchFunction = (query) => {
-  store.search(query).then(value => {
+  store.search(query).then((value) => {
     searchResults.value = value.quotes;
   });
 };
@@ -31,8 +30,4 @@ const searchFunction = (query) => {
 const clearSearchResults = () => {
   searchResults.value = [];
 };
-
-watch(search, (newValue) => {
-  searchFunction(newValue);
-});
 </script>

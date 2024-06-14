@@ -15,11 +15,7 @@ import { ref, watch, defineEmits } from "vue";
 const emit = defineEmits();
 const search = ref('');
 
-const searchFunction = (query) => {
-  emit('search', query);
-};
-
 watch(search, (newValue) => {
-  searchFunction(newValue);
+  emit('search', newValue);
 });
 </script>
