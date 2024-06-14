@@ -77,13 +77,39 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
 
   async function getLatestPrice(symbol: string) {
     const data = await fetchData(symbol, '1m', '1d', 'backtests');
+
     if (data.length > 0) {
-      const latestPrice = data[data.length - 1].close;
-      return Math.floor(latestPrice);
+      let latestEntry = null;
+
+      // Find the latest entry with non-null values
+      for (let i = data.length - 1; i >= 0; i--) {
+        const entry = data[i];
+        if (entry.high !== null && entry.low !== null && entry.open !== null && entry.close !== null) {
+          latestEntry = entry;
+          break;
+        }
+      }
+
+      if (latestEntry !== null) {
+        const latestPrice = latestEntry.close.toFixed(2);
+
+        const { high, low, open, close } = latestEntry;
+
+        return {
+          high,
+          low,
+          open,
+          close,
+          lastPrice: latestPrice
+        };
+      } else {
+        throw new Error('All data points are null for the given symbol.');
+      }
     } else {
       throw new Error('No data available for the given symbol.');
     }
   }
+
   async function getPercentageChangeFromYesterday(symbol: string) {
     const now = Date.now();
     const twentyFourHoursAgo = now - (86400000); //1 day in ms

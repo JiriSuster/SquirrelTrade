@@ -51,7 +51,7 @@ yahooStore.getSymbolInfo(symbol).then(value => {
 })
 
 yahooStore.getLatestPrice(symbol).then(value => {
-  price.value = value.toString()
+  price.value = value.lastPrice.toString()
 })
 
 yahooStore.getPercentageChangeFromYesterday(symbol).then(value => {
