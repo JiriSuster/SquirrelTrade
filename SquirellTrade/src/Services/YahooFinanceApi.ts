@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import axios from "axios";
+import * as cheerio from 'cheerio';
 const proxyEnv = import.meta.env.VITE_DEFAULT_PROXY
 const chartEnv = import.meta.env.VITE_CHART_ENDPOINT
 const searchEnv = import.meta.env.VITE_SEARCH_ENDPOINT
@@ -109,31 +110,22 @@ export const useYahooFinanceApiStore = defineStore('yahoo', () => {
       throw new Error('No data available for the given symbol.');
     }
   }
+  async function scrapePercentage(symbol: string) {
+    try {
+      const url = proxyEnv + `https://finance.yahoo.com/quote/${symbol}/`;
+      const { data } = await axios.get(url);
+      const $ = cheerio.load(data);
+      const percentageElement = $('fin-streamer[data-testid="qsp-price-change-percent"] span');
+      const percentageText = percentageElement.text().replace("(","").replace(")","");
 
-  async function getPercentageChangeFromYesterday(symbol: string) {
-    const now = Date.now();
-    const twentyFourHoursAgo = now - (86400000); //1 day in ms
-    const fromTimestamp = Math.floor(twentyFourHoursAgo / 1000);
-    const data = await fetchData(symbol, '1m', '1d', 'backtests');
-
-    if (data.length > 0) {
-      const startIndex = data.findIndex((d: any) => d.timestamp >= fromTimestamp);
-
-      if (startIndex !== -1) {
-        const yesterdayClose = data[startIndex].close;
-        const latestPrice = data[data.length - 1].close;
-        const percentageChange = ((latestPrice - yesterdayClose) / yesterdayClose) * 100;
-
-        return percentageChange.toFixed(2);
-
-      } else {
-        throw new Error('No data available for the last 24 hours.');
-      }
-    } else {
-      throw new Error('No data available for the given symbol.');
+      console.log('Percentage:', percentageText);
+      return percentageText
+    } catch (error) {
+      console.error('Error scraping the percentage:', error);
+      return ""
     }
   }
 
 
-  return {getChartData, search, getRawData, getSymbolInfo,getLatestPrice, getPercentageChangeFromYesterday}
+  return {getChartData, search, getRawData, getSymbolInfo,getLatestPrice, scrapePercentage}
 })

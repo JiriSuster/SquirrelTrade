@@ -1,11 +1,10 @@
 <script setup lang="ts">
-
 import HighchartsStock from "@/components/StockChart.vue";
-import {computed, onMounted, reactive, ref} from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
-import {useWatchlistStore} from "@/store/WatchListStocks";
-import {OwnedStock, useMyOwnedStocks} from "@/store/MyOwnedStocks";
-import {useRoute} from "vue-router";
+import { useWatchlistStore } from "@/store/WatchListStocks";
+import { OwnedStock, useMyOwnedStocks } from "@/store/MyOwnedStocks";
+import { useRoute } from "vue-router";
 
 interface CandlestickData {
   type: string;
@@ -19,11 +18,7 @@ interface ChartOptions {
   };
 }
 
-// Assuming chartOptions is defined somewhere
-
-
-//dodelat
-const chartOptions : ChartOptions = ref({
+const chartOptions: ChartOptions = ref({
   rangeSelector: {
     enabled: false
   },
@@ -39,32 +34,33 @@ const fetchChartData = (symbol: string) => {
     }];
   });
 };
-const yahooStore = useYahooFinanceApiStore()
+
+const yahooStore = useYahooFinanceApiStore();
 const watchStore = useWatchlistStore();
-const ownedStocksStore = useMyOwnedStocks()
+const ownedStocksStore = useMyOwnedStocks();
 
 const route = useRoute();
-const symbol = route.query.symbol ? route.query.symbol.toString() : ""
-fetchChartData(symbol)
-var name = ref("")
-var price = ref("")
-var percentage = ref("")
+const symbol = route.query.symbol ? route.query.symbol.toString() : "NVDA";
+fetchChartData(symbol);
+var name = ref("");
+var price = ref("");
+var percentage = ref("");
+
 yahooStore.getSymbolInfo(symbol).then(value => {
-  name.value = value.shortName
-})
+  name.value = value.shortName;
+});
 
 yahooStore.getLatestPrice(symbol).then(value => {
-  price.value = value.lastPrice.toString()
-})
+  price.value = value.lastPrice.toString();
+});
 
-yahooStore.getPercentageChangeFromYesterday(symbol).then(value => {
-  percentage.value = value.toString()
-})
+yahooStore.scrapePercentage(symbol).then(value => {
+  percentage.value = value.toString();
+});
 
-const selectedStockInfo = ref<OwnedStock>({id: "",date: "", price: 100, quantity: 0, symbol: symbol})
+const selectedStockInfo = ref<OwnedStock>({ id: "", date: "", price: 100, quantity: 0, symbol: symbol });
 
 function orderStock() {
-
   selectedStockInfo.value = {
     ...selectedStockInfo.value,
     date: new Date().toLocaleString()
@@ -76,41 +72,39 @@ const isQuantityInvalid = computed(() => {
   return selectedStockInfo.value.quantity <= 0;
 });
 
+const heartColor = ref("red-darken-2");
 
-
-const heartColor = ref("red-darken-2")
-
-
-
-
-
+const percentageColor = computed(() => {
+  if (percentage.value.startsWith("+")) {
+    return "text-green";
+  } else if (percentage.value.startsWith("-")) {
+    return "text-red";
+  } else {
+    return "";
+  }
+});
 </script>
+
 
 
 <template>
   <v-container>
     <v-row>
       <v-col cols="12" md="6">
-        <h1>{{symbol}}</h1>
-        <p>{{name}}</p>
+        <h1>{{ symbol }}</h1>
+        <p>{{ name }}</p>
         <div class="d-flex align-center">
-          <h1>{{price}} USD</h1>
-          <p class="ml-4">{{ percentage }} %</p>
+          <h1>{{ price }} USD</h1>
+          <p :class="percentageColor" class="ml-4 font-weight-bold" >{{ percentage }}</p>
         </div>
-        <v-btn class="mb-2 mt-4 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" @click="watchStore.toggleFavorite(symbol); ">
+        <v-btn class="mb-2 mt-4 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" @click="watchStore.toggleFavorite(symbol);">
           <template v-slot:prepend>
             <v-icon icon="mdi-heart" :color="watchStore.isFavorite(symbol) ? 'red-darken-4' : 'white'"></v-icon>
           </template>
           Add to watchlist
         </v-btn>
-
-
         <h3 class="mt-5">Quantity</h3>
-
-        <v-responsive
-          class="mt-4 mb-4"
-          max-width="500"
-        >
+        <v-responsive class="mt-4 mb-4" max-width="500">
           <v-text-field
             v-model="selectedStockInfo.quantity"
             type="number"
@@ -119,21 +113,26 @@ const heartColor = ref("red-darken-2")
             label="Quantity"
           ></v-text-field>
         </v-responsive>
-
         <v-btn class="mb-2 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus" :disabled="isQuantityInvalid" @click="orderStock()">
           Order
         </v-btn>
       </v-col>
-
-
       <v-col cols="12" md="6">
         <highcharts-stock :chartOptions="chartOptions"></highcharts-stock>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
-<style scoped>
 
+<style scoped>
+.text-green {
+  color: green;
+}
+.text-red {
+  color: red;
+}
+.font-weight-bold {
+  font-weight: bold;
+}
 </style>

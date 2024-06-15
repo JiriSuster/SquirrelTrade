@@ -1,15 +1,18 @@
 <template>
   <SearchBar
+    v-model="selectedSymbol"
     @search="searchFunction"
     :searchResults="searchResults"
     @symbol-selected="selectSymbol"
     @clear-results="clearSearchResults"
+    @changebar="changeSearchBarValue"
   />
   <SearchResults
     v-if="searchResults.length"
     :searchResults="searchResults"
     @symbol-selected="selectSymbol"
     @clear-results="clearSearchResults"
+    @changebar="changeSearchBarValue"
   />
 </template>
 
@@ -19,10 +22,7 @@ import SearchResults from '@/components/search/SearchResults.vue';
 import SearchBar from '@/components/search/SearchBar.vue';
 import { useYahooFinanceApiStore } from '@/Services/YahooFinanceApi';
 
-const props = defineProps({
-  selectSymbol: Function,
-});
-
+const selectedSymbol = ref('');
 const searchResults = ref([]);
 const store = useYahooFinanceApiStore();
 
@@ -35,4 +35,12 @@ const searchFunction = (query) => {
 const clearSearchResults = () => {
   searchResults.value = [];
 };
+const props = defineProps({
+  selectSymbol: Function,
+});
+
+const changeSearchBarValue = (symbol) => {
+  selectedSymbol.value = symbol;
+};
+
 </script>

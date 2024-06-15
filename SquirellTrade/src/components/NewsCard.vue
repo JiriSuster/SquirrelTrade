@@ -78,7 +78,6 @@ const props = defineProps<{ newsData: NewsData }>();
         <v-divider></v-divider>
 
         <v-card-text>
-          {{newsData.body + "..."}}
         </v-card-text>
       </div>
     </v-expand-transition>

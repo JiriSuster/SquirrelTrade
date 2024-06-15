@@ -21,10 +21,11 @@ const props = defineProps({
   searchResults: Array,
 });
 
-const emit = defineEmits();
+const emit = defineEmits(['symbol-selected', 'clear-results', 'changebar']);
 
 const handleSymbolClick = (symbol) => {
   emit('symbol-selected', symbol);
+  emit('changebar', symbol);
   emit('clear-results');
 };
 </script>
