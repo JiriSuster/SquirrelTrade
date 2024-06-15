@@ -5,6 +5,7 @@ import NewsCard from "@/components/NewsCard.vue";
 import {reactive} from "vue";
 
 import {SortOrderEnum, useCryptoCompareApiStore} from "@/Services/CryptoCompareApi"
+import Loading from "@/components/Loading.vue";
 var news = reactive({
   newsList: []
 })
@@ -20,7 +21,12 @@ store.getNews(SortOrderEnum.Latest,18).then(value => { //tady se vola ziskani ne
 </script>
 
 <template>
-  <v-container class="fill-height">
+  <div v-if="store.isLoading" class="d-flex align-center justify-center">
+    <Loading/>
+  </div>
+
+
+  <v-container  v-else class="fill-height">
     <v-responsive>
       <h1 class="mb-5">Latest news</h1>
       <div v-if="news.newsList.length === 0">

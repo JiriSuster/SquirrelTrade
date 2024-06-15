@@ -2,6 +2,8 @@
 import {useMyOwnedStocks} from "@/store/MyOwnedStocks";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
 import {ref, watchEffect} from "vue";
+import Search from "@/components/search/Search.vue";
+import router from "@/router";
 
 const ownedStocks = useMyOwnedStocks()
 const yahooStore = useYahooFinanceApiStore()
@@ -40,6 +42,10 @@ async function getStockInfo() {
     }
 }
 
+const selectSymbol = (symbol: string) => {
+  router.push({ name: 'detail', query: { symbol } });
+};
+
 watchEffect(() => {
     getStockInfo();
 });
@@ -49,18 +55,13 @@ watchEffect(() => {
 
 <template>
   <v-container>
-    <div class="d-flex justify-center align-center">
-    <v-col cols="10">
-    <v-text-field
-      append-inner-icon="mdi-magnify"
-      class="ma-5 w-100"
-      v-model="search"
-      label="Search"
-      outlined
-      placeholder="Type here to search..."
-    ></v-text-field>
-    </v-col>
-    </div>
+
+    <v-row justify="center">
+      <v-col cols="12" sm="8" class="text-center">
+        <h1>Trade with us</h1>
+        <Search :select-symbol="selectSymbol"></Search>
+      </v-col>
+    </v-row>
 
     <h1>My trades</h1>
 

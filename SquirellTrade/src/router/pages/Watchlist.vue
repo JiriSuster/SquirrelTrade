@@ -2,6 +2,8 @@
 import {useWatchlistStore} from "@/store/WatchListStocks";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
 import {onMounted, ref, watch, watchEffect} from "vue";
+import router from "@/router";
+import Search from "@/components/search/Search.vue";
 
 const watchStore = useWatchlistStore();
 const yahooStore = useYahooFinanceApiStore();
@@ -40,6 +42,10 @@ async function getPrices() {
     }
 }
 
+const selectSymbol = (symbol: string) => {
+  router.push({ name: 'detail', query: { symbol } });
+};
+
 
 watchEffect(() => {
     getPrices();
@@ -51,18 +57,13 @@ watchEffect(() => {
 <template>
   <v-container class="fill-height">
     <v-responsive>
-      <div class="d-flex justify-center align-center">
-        <v-col cols="10">
-          <v-text-field
-            append-inner-icon="mdi-magnify"
-            class="ma-5 w-100"
-            v-model="search"
-            label="Search"
-            outlined
-            placeholder="Type here to search..."
-          ></v-text-field>
+
+      <v-row justify="center">
+        <v-col cols="12" sm="8" class="text-center">
+          <h1>Trade with us</h1>
+          <Search :select-symbol="selectSymbol"></Search>
         </v-col>
-      </div>
+      </v-row>
 
       <h1>Watchlist</h1>
       <div>

@@ -58,12 +58,14 @@ yahooStore.scrapePercentage(symbol).then(value => {
   percentage.value = value.toString();
 });
 
-const selectedStockInfo = ref<OwnedStock>({ id: "", date: "", price: 100, quantity: 0, symbol: symbol });
+const selectedStockInfo = ref<OwnedStock>({ id: "", date: "", price: 0, quantity: 0, symbol: symbol });
 
 function orderStock() {
+
   selectedStockInfo.value = {
     ...selectedStockInfo.value,
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString(),
+    price: parseFloat(price.value)
   };
   ownedStocksStore.addStock(selectedStockInfo.value);
 }
