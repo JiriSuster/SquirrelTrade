@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
 import exportFromJSON from "export-from-json";
 import Search from "@/components/search/Search.vue";
+import HighchartsStock from "@/components/StockChart.vue";
 const selectedSymbol = ref("");
 const selectedTimeFrame = ref("1d");
 const selectedFormat = ref("JSON");
@@ -50,6 +51,39 @@ const selectSymbol = (symbol : any) => {
   selectedSymbol.value = symbol
 };
 
+interface CandlestickData {
+  type: string;
+  name: string;
+  data: any;
+}
+interface ChartOptions {
+  value: {
+    series: CandlestickData[];
+  };
+}
+
+const chartOptions: ChartOptions = ref({
+  rangeSelector: {
+    enabled: false
+  },
+  series: []
+});
+
+const fetchChartData = () => {
+  store.getChartData(selectedSymbol.value, "1m", "1d").then(candlestickData => {
+    chartOptions.value.series = [{
+      type: 'candlestick',
+      name: "",
+      data: candlestickData
+    }];
+  });
+};
+
+watch(selectedSymbol, (newValue, oldValue) => {
+  if (newValue && newValue !== "") {
+    fetchChartData();
+  }
+});
 
 </script>
 
@@ -57,6 +91,7 @@ const selectSymbol = (symbol : any) => {
   <v-container class="fill-height">
     <v-responsive>
       <h1>Backtests</h1>
+      <v-row>
       <v-col cols="12" sm="6">
         <p>Stock</p>
         <Search :select-symbol="selectSymbol"></Search>
@@ -76,13 +111,17 @@ const selectSymbol = (symbol : any) => {
           <v-btn v-bind:variant="selectedFormat === 'CSV' ? 'elevated' : 'outlined'" @click="selectedFormat = 'CSV'" color="yellow-darken-2" class="mr-2 pa-1" size="large" density="compact" rounded="xl" >CSV</v-btn>
           <v-btn v-bind:variant="selectedFormat === 'XML' ? 'elevated' : 'outlined'" @click="selectedFormat = 'XML'" color="yellow-darken-2" class="mr-2 pa-1" size="large" density="compact" rounded="xl" >XML</v-btn>
         </v-row>
-        <v-row>
-            <v-btn :color="isDownloading ? 'green-darken-2' : 'yellow-darken-2'" class="mb-2 mt-5 pl-4 pr-4" prepend-icon="mdi-download" size="large" density="compact" rounded="xl" @click="downloadData()">
+
+            <v-btn :color="isDownloading ? 'green-darken-2' : 'yellow-darken-2'" class="ml-2 mb-2 mt-10 pl-4 pr-4" prepend-icon="mdi-download" size="large" density="compact" rounded="xl" @click="downloadData()">
                Download
             </v-btn>
-        </v-row>
+
       </v-col>
 
+      <v-col cols="12" md="6" v-if="selectedSymbol != ''">
+        <highcharts-stock :chartOptions="chartOptions"></highcharts-stock>
+      </v-col>
+      </v-row>
     </v-responsive>
   </v-container>
 </template>
