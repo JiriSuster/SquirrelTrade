@@ -1,5 +1,4 @@
 <template>
-  <!-- Your existing template code -->
   <SearchBar
     v-model="selectedSymbol"
     @search="searchFunction"
@@ -15,7 +14,6 @@
     @clear-results="clearSearchResults"
     @changebar="changeSearchBarValue"
   />
-  <!-- Your existing template code -->
 </template>
 
 <script setup>
