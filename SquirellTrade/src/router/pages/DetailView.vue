@@ -5,6 +5,7 @@ import { useYahooFinanceApiStore } from "@/Services/YahooFinanceApi";
 import { useWatchlistStore } from "@/store/WatchListStocks";
 import { OwnedStock, useMyOwnedStocks } from "@/store/MyOwnedStocks";
 import { useRoute } from "vue-router";
+import ConfirmationOrderDialog from "@/components/ConfirmationOrderDialog.vue";
 
 interface CandlestickData {
   type: string;
@@ -45,6 +46,7 @@ fetchChartData(symbol);
 var name = ref("");
 var price = ref("");
 var percentage = ref("");
+var showDialog = ref(false)
 
 yahooStore.getSymbolInfo(symbol).then(value => {
   name.value = value.shortName;
@@ -68,7 +70,16 @@ function orderStock() {
     price: parseFloat(price.value)
   };
   ownedStocksStore.addStock(selectedStockInfo.value);
+  showConfirmationTimer()
 }
+
+function showConfirmationTimer() {
+  setTimeout(() => {
+    showDialog.value = !showDialog.value
+  }, 1000);
+  showDialog.value = !showDialog.value
+}
+
 
 const isQuantityInvalid = computed(() => {
   return selectedStockInfo.value.quantity <= 0;
@@ -91,7 +102,7 @@ const percentageColor = computed(() => {
 
 <template>
   <v-container>
-    <v-row>
+    <v-row class="ma-1">
       <v-col cols="12" md="6">
         <h1>{{ symbol }}</h1>
         <p>{{ name }}</p>
@@ -118,11 +129,13 @@ const percentageColor = computed(() => {
         <v-btn class="mb-2 pl-4 pr-4" color="yellow-darken-2" size="large" density="compact" rounded="xl" prepend-icon="mdi-plus" :disabled="isQuantityInvalid" @click="orderStock()">
           Order
         </v-btn>
+
       </v-col>
       <v-col cols="12" md="6">
         <highcharts-stock :chartOptions="chartOptions"></highcharts-stock>
       </v-col>
     </v-row>
+    <ConfirmationOrderDialog v-if="showDialog" class="bg-deep-purple-lighten-4 mt-5"/>
   </v-container>
 </template>
 
