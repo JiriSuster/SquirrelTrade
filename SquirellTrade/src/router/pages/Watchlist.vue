@@ -24,7 +24,7 @@ async function getPrices() {
         for (const symbol of watchStore.favoriteSymbols) {
             const symbolString = symbol.toString();
             const latestPrice = await yahooStore.getLatestPrice(symbolString);
-            const latestChange = await yahooStore.getPercentageChangeFromYesterday(symbolString)
+            const latestChange = await yahooStore.scrapePercentage(symbolString)
 
             prices.value.push({
                 symbol: symbolString,
@@ -86,7 +86,7 @@ watchEffect(() => {
             <div class="d-flex justify-space-between align-center pa-0">
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.symbol }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.close }}</v-col>
-              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.change}}% </v-col>
+              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.change}}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.high }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.low }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">
