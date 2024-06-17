@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useWatchlistStore} from "@/store/WatchListStocks";
 import {useYahooFinanceApiStore} from "@/Services/YahooFinanceApi";
-import {onMounted, ref, watch, watchEffect} from "vue";
+import {computed, onMounted, ref, watch, watchEffect} from "vue";
 import router from "@/router";
 import Search from "@/components/search/Search.vue";
 
@@ -42,9 +42,21 @@ async function getPrices() {
     }
 }
 
+const getChangeClass = (change: string) => {
+  if (change.startsWith('+')) {
+    return 'green';
+  } else if (change.startsWith('-')) {
+    return 'red';
+  } else {
+    return '';
+  }
+};
+
 const selectSymbol = (symbol: string) => {
   router.push({ name: 'detail', query: { symbol } });
 };
+
+
 
 
 watchEffect(() => {
@@ -86,7 +98,7 @@ watchEffect(() => {
             <div class="d-flex justify-space-between align-center pa-0">
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.symbol }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.close }}</v-col>
-              <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.change}}</v-col>
+              <v-col :class="getChangeClass(stock.change)" class="d-flex justify-center pa-0" cols="2">{{ stock.change}}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.high }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">{{ stock.low }}</v-col>
               <v-col class="d-flex justify-center pa-0" cols="2">
@@ -118,5 +130,13 @@ watchEffect(() => {
 .custom-list-item {
   background-color: #f0f0f0;
   border-radius: 10px;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
 }
 </style>
