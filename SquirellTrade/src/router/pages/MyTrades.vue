@@ -23,7 +23,7 @@ async function getStockInfo() {
     try {
         for (const stock of ownedStocks.ownedStocks) {
             const latestPrice = await yahooStore.getLatestPrice(stock.symbol);
-            const currentTotalValue = latestPrice.close * stock.quantity;
+            const currentTotalValue =latestPrice.close.toFixed(2) * stock.quantity;
             const initialTotalValue = stock.price * stock.quantity;
             const profit = currentTotalValue - initialTotalValue;
 
