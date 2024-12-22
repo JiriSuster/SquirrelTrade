@@ -77,9 +77,6 @@ And ideally use some better cors proxy `VITE_DEFAULT_PROXY`
 ![Screenshot5](Screenshots/Screenshot5.png)
 ![Screenshot6](Screenshots/Screenshot6.png)
 ![Screenshot7](Screenshots/Screenshot7.png)
-![Screenshot8](Screenshots/Screenshot8.png)
-![Screenshot9](Screenshots/Screenshot9.png)
-![Screenshot10](Screenshots/Screenshot10.png)
 
 
 ## License
