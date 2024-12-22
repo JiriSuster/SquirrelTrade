@@ -64,7 +64,7 @@ To run this project, you will need to add the following environment variables to
 And ideally use some better cors proxy `VITE_DEFAULT_PROXY`
 
 ## Authors
-
+- [David Krčmář](https://www.linkedin.com/in/david-krcmar-943182235/)
 - [Jiří Daniel Šuster](https://www.linkedin.com/in/ji%C5%99%C3%AD-daniel-%C5%A1uster-7017b0306/)
 
 
