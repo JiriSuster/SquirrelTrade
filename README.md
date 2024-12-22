@@ -69,7 +69,7 @@ And ideally use some better cors proxy `VITE_DEFAULT_PROXY`
 
 
 ## Screenshots
-
+![Screenshot0](Screenshots/Screenshot0.png)
 ![Screenshot1](Screenshots/Screenshot1.png)
 ![Screenshot2](Screenshots/Screenshot2.png)
 ![Screenshot3](Screenshots/Screenshot3.png)
